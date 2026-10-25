@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Whale Radar
 
-## Getting Started
+Whale Radar is a real-time Solana DEX intelligence platform. It tracks large trades (over 10 SOL) across Raydium and Meteora, providing a live dashboard and automated Telegram alerts for community channels.
 
-First, run the development server:
+## The Problem
+
+In decentralized finance, large trades by "whales" often precede significant market movements. Manually monitoring multiple liquidity pools across different DEXs is inefficient and prone to missed opportunities. Whale Radar automates this surveillance, acting as an early warning system for significant capital movements.
+
+## How it Works
+
+The platform indexes real-time transaction data from the Solana blockchain. 
+
+1. **Data Ingestion:** It listens to swap events on Raydium and Meteora via Helius webhooks and WebSockets.
+2. **Filtering:** Transactions are evaluated against a configurable threshold (defaulting to 10 SOL).
+3. **Storage & Analysis:** Significant trades are recorded in a Supabase database for historical analysis.
+4. **Alerting:** The system dispatches immediate notifications to configured Telegram channels, allowing communities to react to whale activity in real time.
+5. **Dashboard:** A Next.js interface provides a live feed and analytics of recent large transactions.
+
+## Architecture
+
+- **Frontend:** Next.js (App Router) and Tailwind CSS.
+- **Data Provider:** Helius API for real-time Solana indexing.
+- **Database:** Supabase (PostgreSQL) for storing trade history and configuration.
+- **Bot:** Telegram Bot API for push notifications.
+
+## Quick Start
+
+### 1. Clone the repository
+
+```bash
+git clone git@github.com:superwavvy/whale-radar.git
+cd whale-radar
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+```bash
+cp .env.example .env
+```
+
+Populate the `.env` file with your `HELIUS_API_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `TELEGRAM_BOT_TOKEN`.
+
+### 4. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Limitations
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The current implementation relies on the uptime and API limits of the Helius free tier. In periods of extreme network congestion on Solana, webhook delays may occur.
